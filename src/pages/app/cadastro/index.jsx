@@ -1,5 +1,5 @@
 import '@fortawesome/fontawesome-free/css/all.min.css';
-
+import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import './index.scss';
 import axios from 'axios';
@@ -18,20 +18,29 @@ export default function Cadastrar() {
         }
 
         const dados = { classificacao, salinidade, uso };
+        
 
-        if (alter === -1) {
-            const url = 'http://localhost:5010/agua';
-            let resp = await axios.post(url, dados);
-            let id = resp.data.id;
+        
+    if (alter === -1) { 
+        const url = 'http://localhost:5010/agua';
+        let resp = await axios.post(url, dados);
+        let id = resp.data.id;
 
-            setLista([...lista, { ...dados, id }]);
-        } else {
-            const id = lista[alter].id;
+        
+        const dadosComId = { classificacao, salinidade, uso, id };
+        setLista([...lista, dadosComId]);}
+
+        else {
+           let item = lista[alter];
+            const id = item.id;
             const url = `http://localhost:5010/agua/${id}`;
             await axios.put(url, dados);
 
-            lista[alter] = { ...dados, id };
-            setLista([...lista]);
+            let novoitem =  { classificacao, salinidade, uso, id };
+            let atuali = [...lista]
+            atuali[alter] = novoitem;
+          
+            setLista(atuali);
             setAlter(-1);
         }
 
@@ -79,6 +88,7 @@ export default function Cadastrar() {
 
             <button onClick={salvar}>Salvar</button>
             <button onClick={buscar}>Buscar</button>
+            <Link to = '/listar'>Tabela</Link>
 
             <div className="lista-agua">
                 {lista.map((item, pos) => (
